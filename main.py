@@ -5,6 +5,11 @@ INVITE LINK: https://discord.com/oauth2/authorize?client_id=896896783123357729&s
 import discord
 from discord.commands import permissions
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 
 bot = discord.Bot()
@@ -57,4 +62,4 @@ async def CommandName_error(ctx, error):
         error, ephemeral=True
     )  # ephemeral makes "Only you can see this" message
 
-bot.run('ODk2ODk2NzgzMTIzMzU3NzI5.YWNyOA.0YygIJthjQLf2nDHgKQMwagTp7g')
+bot.run(os.getenv("TOKEN"))
