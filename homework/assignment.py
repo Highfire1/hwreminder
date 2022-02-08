@@ -1,12 +1,30 @@
+import difflib
+import dateparser
+import time
+
 class Assignment:
-    def __init__(self, name, subject, description, due_date):
-        self.name = name
-        self.subject = subject
-        self.description = description
-        self.due_date = due_date
+    def __init__(self, subject, assignment, due_date):
+        self.assignment = assignment
+        
+        subjectslist = [
+            "Calculus", 
+            "French",
+            "English",
+            "CLC",
+            "Biology",
+            "Physics"
+        ]
 
-    def __str__(self):
-        return self.name
+        choices = difflib.get_close_matches(subject, subjectslist)
+        if choices:
+            self.subject = choices[0]
+        else:
+            self.subject = subject
 
-    def __repr__(self):
-        return self.name
+        try:
+            due = dateparser.parse(due_date)
+            due = time.mktime(due.timetuple())
+            due = int(due)
+            self.due_date = f" <t:{due}:f> "
+        except:
+            self.due_date = f"`{due_date}`"

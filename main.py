@@ -37,6 +37,7 @@ async def danger(ctx, code: discord.Option(str, "code")):
 @bot.slash_command(guild_ids=good_guilds, name = "exit", desc="DANGER: SHUTS DOWN THE BOT")
 @permissions.is_owner()
 async def exit(ctx):
+    await ctx.respond("bye :)")
     sys.exit()
 
 # =============================== #
