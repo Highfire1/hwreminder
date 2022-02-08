@@ -1,82 +1,43 @@
+good_guilds = [714354863349170187, 511924606651727895]
 import discord
 from discord.commands import slash_command
 from discord.ext import commands
 from discord.ext.commands.context import Context
 
 
-# Defines a custom Select containing colour options
-# that the user can choose. The callback function
-# of this class is called when the user changes their choice
-good_guilds = [714354863349170187, 511924606651727895]
-
-
-class Dropdown(discord.ui.Select):
-
-
+class ButtonView(discord.ui.View):
     def __init__(self):
+        # making None is important if you want the button work after restart!
+        super().__init__(timeout=None)
 
-        # Set the options that will be presented inside the dropdown
-        options = [
-            discord.SelectOption(
-                label="Red", description="Your favourite colour is red", emoji="🟥"
-            ),
-            discord.SelectOption(
-                label="Green", description="Your favourite colour is green", emoji="🟩"
-            ),
-            discord.SelectOption(
-                label="Blue", description="Your favourite colour is blue", emoji="🟦"
-            ),
-        ]
-
-        # The placeholder is what will be shown when no option is chosen
-        # The min and max values indicate we can only pick one of the three options
-        # The options parameter defines the dropdown options. We defined this above
-        super().__init__(
-            placeholder="Choose your favourite colour...",
-            min_values=1,
-            max_values=1,
-            options=options,
-        )
-
-    async def callback(self, interaction: discord.Interaction):
-        # Use the interaction object to send a response message containing
-        # the user's favourite colour or choice. The self object refers to the
-        # Select object, and the values attribute gets a list of the user's
-        # selected options. We only want the first one.
-        await interaction.response.send_message(
-            f"Your favourite colour is {self.values[0]}"
-        )
+    # custom_id is required and should be unique for <commands.Bot.add_view>
+    # attribute emoji can be used to include emojis which can be default str emoji or str(<:emojiName:int(ID)>)
+    # timeout can be used if there is a timeout on the button interaction. Default timeout is set to 180.
+    @discord.ui.button(
+        style=discord.ButtonStyle.blurple, custom_id="counter:firstButton"
+    )
+    async def leftButton(self, button, interaction):
+        await interaction.response.edit_message("button was pressed!")
 
 
-class DropdownView(discord.ui.View):
-    def __init__(self):
-        super().__init__()
-
-        # Adds the dropdown to our view object.
-        self.add_item(Dropdown())
-
-
-class DropdownExample(commands.Cog):
+class ButtonExample(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @slash_command(
-        guild_ids=good_guilds, name="color2", description="tell me your favourite color!"
+        guild_ids=[...], name="slash_command_name", description="command description!"
     )
-    async def whatcolor(self, ctx):
-        await ctx.respond("what is your favrouite color?", view=DropdownView())
+    async def CommandName(self, ctx):
+        navigator = ButtonView()  # button View <discord.ui.View>
+        await ctx.respond("press the button.", view=navigator)
 
-        # ephemeral makes "Only you can see this" message
-        """
-        await ctx.respond("what is your favrouite color?",view=DropdownView(),ephemeral=True)
-        """
-
-    @whatcolor.error
-    async def color_error(self, ctx: Context, error):
+    # for error handling
+    @CommandName.error
+    async def CommandName_error(self, ctx: Context, error):
         return await ctx.respond(
             error, ephemeral=True
         )  # ephemeral makes "Only you can see this" message
 
 
 def setup(bot):
-    bot.add_cog(DropdownExample(bot))
+    bot.add_cog(ButtonExample(bot))
